@@ -1,2 +1,25 @@
 // generated with @7nohe/openapi-react-query-codegen@2.0.0-beta.3 
 
+import { type Options } from "@hey-api/client-fetch";
+import { UseQueryResult } from "@tanstack/react-query";
+import { getApiBalance, getApiPortfolio, postApiBuy, postApiSell, postAuthLogin, postAuthRegister } from "../requests/services.gen";
+export type GetApiBalanceDefaultResponse = Awaited<ReturnType<typeof getApiBalance>>["data"];
+export type GetApiBalanceQueryResult<TData = GetApiBalanceDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGetApiBalanceKey = "GetApiBalance";
+export const UseGetApiBalanceKeyFn = (clientOptions: Options<unknown, true> = {}, queryKey?: Array<unknown>) => [useGetApiBalanceKey, ...(queryKey ?? [clientOptions])];
+export type GetApiPortfolioDefaultResponse = Awaited<ReturnType<typeof getApiPortfolio>>["data"];
+export type GetApiPortfolioQueryResult<TData = GetApiPortfolioDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGetApiPortfolioKey = "GetApiPortfolio";
+export const UseGetApiPortfolioKeyFn = (clientOptions: Options<unknown, true> = {}, queryKey?: Array<unknown>) => [useGetApiPortfolioKey, ...(queryKey ?? [clientOptions])];
+export type PostApiBuyMutationResult = Awaited<ReturnType<typeof postApiBuy>>;
+export const usePostApiBuyKey = "PostApiBuy";
+export const UsePostApiBuyKeyFn = (mutationKey?: Array<unknown>) => [usePostApiBuyKey, ...(mutationKey ?? [])];
+export type PostApiSellMutationResult = Awaited<ReturnType<typeof postApiSell>>;
+export const usePostApiSellKey = "PostApiSell";
+export const UsePostApiSellKeyFn = (mutationKey?: Array<unknown>) => [usePostApiSellKey, ...(mutationKey ?? [])];
+export type PostAuthLoginMutationResult = Awaited<ReturnType<typeof postAuthLogin>>;
+export const usePostAuthLoginKey = "PostAuthLogin";
+export const UsePostAuthLoginKeyFn = (mutationKey?: Array<unknown>) => [usePostAuthLoginKey, ...(mutationKey ?? [])];
+export type PostAuthRegisterMutationResult = Awaited<ReturnType<typeof postAuthRegister>>;
+export const usePostAuthRegisterKey = "PostAuthRegister";
+export const UsePostAuthRegisterKeyFn = (mutationKey?: Array<unknown>) => [usePostAuthRegisterKey, ...(mutationKey ?? [])];

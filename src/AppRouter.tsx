@@ -10,6 +10,12 @@ import RegisterPage from "./pages/Register";
 import LoginPage from "./pages/Login";
 import { IFunctionRoute } from "./types/IFunctionRoute";
 import { RouteConfig } from "./types/RouteConfig";
+import StockPage from "./pages/Stock";
+import { MarketsPage } from "./components/markets-page";
+import PortfolioPage from "./pages/Portfolio";
+import AnalyticsPage from "./pages/Analytics";
+import WatchlistPage from "./pages/Watchlist";
+import NewsPage from "./pages/News";
 
 interface AuthContextType {
   currentUser: { id: string } | null;
@@ -18,9 +24,9 @@ interface AuthContextType {
 export const AppRoutes = {
   HOME: {
     path: "/",
-    element: <HomePage />,
+    element: <DashboardPage />,
     auth: false,
-    layout: <BaseLayout />,
+    layout: <DashboardLayout />,
   },
   LOGIN: {
     path: "/login",
@@ -34,10 +40,40 @@ export const AppRoutes = {
     auth: false,
     layout: <BaseLayout />,
   },
-  DASHBOARD: {
-    path: "/dashboard",
-    element: <DashboardPage />,
-    auth: true,
+  STOCK: {
+    path: "/stock/:symbol",
+    element: <StockPage />,
+    auth: false,
+    layout: <DashboardLayout />,
+  },
+  MARKETS: {
+    path: "/markets",
+    element: <MarketsPage />,
+    auth: false,
+    layout: <DashboardLayout />,
+  },
+  PORTFOLIO: {
+    path: "/portfolio",
+    element: <PortfolioPage />,
+    auth: false,
+    layout: <DashboardLayout />,
+  },
+  NEWS: {
+    path: "/news",
+    element: <NewsPage />,
+    auth: false,
+    layout: <DashboardLayout />,
+  },
+  ANALYTICS: {
+    path: "/analytics",
+    element: <AnalyticsPage />,
+    auth: false,
+    layout: <DashboardLayout />,
+  },
+  WATCHLIST: {
+    path: "/watchlist",
+    element: <WatchlistPage />,
+    auth: false,
     layout: <DashboardLayout />,
   },
   NOT_FOUND: {
