@@ -36,6 +36,7 @@ export type handlers_RegisterRequest = {
 export type handlers_RegisterResponse = {
     cash_balance?: number;
     id?: number;
+    token?: string;
     username?: string;
 };
 
@@ -105,3 +106,7 @@ export type PostAuthRegisterData = {
 export type PostAuthRegisterResponse = (handlers_RegisterResponse);
 
 export type PostAuthRegisterError = (handlers_ErrorResponse);
+
+export type GetHealthResponse = (handlers_SuccessResponse);
+
+export type GetHealthError = (handlers_ErrorResponse);

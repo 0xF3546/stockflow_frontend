@@ -39,17 +39,11 @@ export function AuthProvider({ children }: IAuth) {
     }
   }
 
-  async function register(user: any) {
+  async function register(user: { username: string; email: string; password: string }) {
     try {
       const res = await _register({ body: user });
-      const data = res?.data || {};
-      const token = null //data.token;
-      if (!token) return;
-      const newUser = { ...user, ...data };
-      setCurrentUser(newUser);
-      localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(newUser));
-      window.location.href = "/";
+      if (!res.response.ok) return;
+      await login({ username: user.username, password: user.password });
     } catch (err) {
       // Fehlerbehandlung nach Bedarf
     }
