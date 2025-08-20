@@ -55,6 +55,11 @@ export type models_Portfolio = {
     userID?: number;
 };
 
+export type types_StockSearchResult = {
+    companyName?: string;
+    symbol?: string;
+};
+
 export type GetApiBalanceResponse = (handlers_BalanceResponse);
 
 export type GetApiBalanceError = (handlers_ErrorResponse);
@@ -84,6 +89,19 @@ export type PostApiSellData = {
 export type PostApiSellResponse = (handlers_SuccessResponse);
 
 export type PostApiSellError = (handlers_ErrorResponse);
+
+export type GetApiStocksSearchData = {
+    query: {
+        /**
+         * Search query for stock symbol or company name
+         */
+        q: string;
+    };
+};
+
+export type GetApiStocksSearchResponse = (Array<types_StockSearchResult>);
+
+export type GetApiStocksSearchError = (handlers_ErrorResponse);
 
 export type PostAuthLoginData = {
     /**

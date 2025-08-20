@@ -2,7 +2,7 @@
 
 import { type Options } from "@hey-api/client-fetch";
 import { UseQueryResult } from "@tanstack/react-query";
-import { getApiBalance, getApiPortfolio, getHealth, postApiBuy, postApiSell, postAuthLogin, postAuthRegister } from "../requests/services.gen";
+import { getApiBalance, getApiPortfolio, getApiStocksSearch, getHealth, postApiBuy, postApiSell, postAuthLogin, postAuthRegister } from "../requests/services.gen";
 export type GetApiBalanceDefaultResponse = Awaited<ReturnType<typeof getApiBalance>>["data"];
 export type GetApiBalanceQueryResult<TData = GetApiBalanceDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useGetApiBalanceKey = "GetApiBalance";
@@ -11,6 +11,10 @@ export type GetApiPortfolioDefaultResponse = Awaited<ReturnType<typeof getApiPor
 export type GetApiPortfolioQueryResult<TData = GetApiPortfolioDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useGetApiPortfolioKey = "GetApiPortfolio";
 export const UseGetApiPortfolioKeyFn = (clientOptions: Options<unknown, true> = {}, queryKey?: Array<unknown>) => [useGetApiPortfolioKey, ...(queryKey ?? [clientOptions])];
+export type GetApiStocksSearchDefaultResponse = Awaited<ReturnType<typeof getApiStocksSearch>>["data"];
+export type GetApiStocksSearchQueryResult<TData = GetApiStocksSearchDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGetApiStocksSearchKey = "GetApiStocksSearch";
+export const UseGetApiStocksSearchKeyFn = (clientOptions: Options<unknown, true>, queryKey?: Array<unknown>) => [useGetApiStocksSearchKey, ...(queryKey ?? [clientOptions])];
 export type GetHealthDefaultResponse = Awaited<ReturnType<typeof getHealth>>["data"];
 export type GetHealthQueryResult<TData = GetHealthDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useGetHealthKey = "GetHealth";

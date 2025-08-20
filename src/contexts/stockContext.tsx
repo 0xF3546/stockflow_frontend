@@ -5,6 +5,7 @@ type StockContextType = {
   stocks: Stock[];
   addToStocks: (stock: Stock) => void;
   removeFromStocks: (stock: Stock) => void;
+  getStock: (symbol: string) => Stock | undefined;
 }
 
 const StockContext = createContext<StockContextType | undefined>(undefined);
@@ -31,10 +32,15 @@ export const StockProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     setStocks((prev) => prev.filter((s) => s.symbol !== stock.symbol));
   };
 
+  const getStock = (symbol: string) => {
+    return stocks.find((stock) => stock.symbol === symbol);
+  };
+
   const values = {
     stocks,
     addToStocks,
-    removeFromStocks
+    removeFromStocks,
+    getStock
   }
 
   return (

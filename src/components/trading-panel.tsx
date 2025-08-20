@@ -6,15 +6,50 @@ import { Label } from "./ui/label"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { ShoppingCart } from "lucide-react"
+import { usePortfolio } from "../contexts/portfolioContext"
+import { useAuthProvider } from "../hooks/useAuthProvider"
+import { useStocks } from "../contexts/stockContext"
 
 interface TradingPanelProps {
   symbol: string
 }
 
 export function TradingPanel({ symbol }: TradingPanelProps) {
+  const { currentUser } = useAuthProvider();
   const [orderType, setOrderType] = useState("market")
   const [quantity, setQuantity] = useState("")
   const [price, setPrice] = useState("")
+  const portfolio = usePortfolio();
+  const stocks = useStocks();
+  const stock = stocks?.getStock(symbol);
+
+  const handleSell = () => {
+    if (!currentUser) return;
+
+    const sellOrder = {
+      symbol,
+      quantity: Number(quantity),
+      price: Number(price),
+      orderType,
+    };
+
+    // Workaround
+    portfolio?.removeFromPortfolio(sellOrder.symbol, sellOrder.quantity);
+  };
+
+  const handleBuy = () => {
+    if (!currentUser) return;
+
+    const buyOrder = {
+      symbol,
+      quantity: Number(quantity),
+      price: Number(price),
+      orderType,
+    };
+
+    //Workaround
+    portfolio?.addToPortfolio(buyOrder.symbol, buyOrder.quantity);
+  };
 
   return (
     <Card className="h-full">
@@ -84,15 +119,20 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
             <div className="pt-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Estimated Cost:</span>
-                <span className="font-semibold">$1,754.30</span>
+                <span className="font-semibold">${stock ? (Number(stock.price) * Number(quantity)).toFixed(2) : 0}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Available Cash:</span>
-                <span className="font-semibold text-primary">$25,430.50</span>
+                <span className="font-semibold text-primary">${currentUser?.cash ?? 0}</span>
               </div>
             </div>
 
-            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">Place Buy Order</Button>
+            <Button
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground"
+              onClick={handleBuy}
+            >
+              Place Buy Order
+            </Button>
           </TabsContent>
 
           <TabsContent value="sell" className="space-y-4 mt-4">
@@ -120,7 +160,7 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
                 value={quantity}
                 onChange={(e) => setQuantity(e.target.value)}
               />
-              <p className="text-xs text-muted-foreground">Available: 50 shares</p>
+              <p className="text-xs text-muted-foreground">Available: {portfolio?.getStockAmount(symbol)} Shares</p>
             </div>
 
             {orderType !== "market" && (
@@ -139,11 +179,14 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
             <div className="pt-4 space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Estimated Proceeds:</span>
-                <span className="font-semibold">$1,754.30</span>
+                <span className="font-semibold">${portfolio?.getStocks(symbol)?.reduce((acc, stock) => acc + stock.price, 0)}</span>
               </div>
             </div>
 
-            <Button className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+            <Button
+              onClick={handleSell}
+              className="w-full bg-destructive hover:bg-destructive/90 text-destructive-foreground"
+            >
               Place Sell Order
             </Button>
           </TabsContent>

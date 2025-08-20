@@ -1,34 +1,60 @@
 import { Outlet, useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useStocks } from "../contexts/stockContext";
 import { BarChart3, TrendingUp, Wallet, Bell, Search, Menu, Newspaper, PieChart, Activity } from "lucide-react"
 import { Badge } from "../components/ui/badge";
 import { AppRoutes } from "../AppRouter";
 import { useAuthProvider } from "../hooks/useAuthProvider";
+import { useGetApiStocksSearch } from "../generated/api/queries";
 
 export default function DashboardLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true)
     const [searchQuery, setSearchQuery] = useState("")
     const [showSuggestions, setShowSuggestions] = useState(false)
-    const stocks = useStocks();
     const navigate = useNavigate();
     const { currentUser } = useAuthProvider();
 
-    const filteredStocks = stocks ? stocks.stocks.filter(
+    const { data: stocks, refetch, isFetching } = useGetApiStocksSearch({
+        query: {
+            q: searchQuery
+        }
+    });
+
+    const [isMarketOpen, setIsMarketOpen] = useState(isMarketOpenNow);
+
+    useEffect(() => {
+        const interval = setInterval(() => setIsMarketOpen(isMarketOpenNow()), 60000);
+        return () => clearInterval(interval);
+    }, []);
+
+    useEffect(() => {
+        if (searchQuery) {
+            refetch();
+        }
+    }, [searchQuery]);
+
+    const filteredStocks = stocks ? stocks.filter(
         (stock) =>
-            stock.symbol.toLowerCase().includes(searchQuery.toLowerCase()) ||
-            stock.name.toLowerCase().includes(searchQuery.toLowerCase()),
+            (stock.symbol && stock.symbol.toLowerCase().includes(searchQuery.toLowerCase())) ||
+            (stock.companyName && stock.companyName.toLowerCase().includes(searchQuery.toLowerCase())),
     ) : []
+
+    function isMarketOpenNow() {
+        const now = new Date();
+        const h = now.getHours();
+        const m = now.getMinutes();
+        return (h > 7 || (h === 7 && m >= 30)) && (h < 22 || (h === 22 && m <= 30));
+    }
 
 
      const navigation = [
-        { id: "/", label: "Dashboard", icon: BarChart3 },
-        { id: "markets", label: "Markets", icon: TrendingUp },
-        { id: "portfolio", label: "Portfolio", icon: Wallet },
-        { id: "analytics", label: "Analytics", icon: PieChart },
-        { id: "news", label: "News", icon: Newspaper },
-        { id: "watchlist", label: "Watchlist", icon: Activity },
+        { id: AppRoutes.HOME.path, label: "Dashboard", icon: BarChart3 },
+        { id: AppRoutes.MARKETS.path, label: "Markets", icon: TrendingUp },
+        { id: AppRoutes.PORTFOLIO.path, label: "Portfolio", icon: Wallet },
+        { id: AppRoutes.ANALYTICS.path, label: "Analytics", icon: PieChart },
+        { id: AppRoutes.NEWS.path, label: "News", icon: Newspaper },
+        { id: AppRoutes.WATCHLIST.path, label: "Watchlist", icon: Activity },
     ]
 
     return (
@@ -110,21 +136,21 @@ export default function DashboardLayout() {
                                                 filteredStocks.map((stock) => (
                                                     <button
                                                         key={stock.symbol}
-                                                        onClick={() => navigate(AppRoutes.STOCK.path.replace(":symbol", stock.symbol))}
+                                                        onClick={() => navigate(AppRoutes.STOCK.path.replace(":symbol", stock.symbol ?? ""))}
                                                         className="w-full px-4 py-3 text-left hover:bg-accent hover:text-accent-foreground transition-colors border-b border-border last:border-b-0 flex items-center justify-between"
                                                     >
                                                         <div>
                                                             <div className="font-mono font-semibold text-sm">{stock.symbol}</div>
-                                                            <div className="text-xs text-muted-foreground">{stock.name}</div>
+                                                            <div className="text-xs text-muted-foreground">{stock.companyName}</div>
                                                         </div>
-                                                        <div className="text-right">
+                                                        {/*<div className="text-right">
                                                             <div className="font-mono text-sm">{stock.price}</div>
                                                             <div
                                                                 className={`text-xs ${stock.change >= 0 ? "text-green-500" : "text-red-500"}`}
                                                             >
                                                                 {stock.change}
                                                             </div>
-                                                        </div>
+                                                        </div>*/}
                                                     </button>
                                                 ))
                                             ) : (
@@ -133,9 +159,11 @@ export default function DashboardLayout() {
                                         </div>
                                     )}
                                 </div>
-                                <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 rounded-full">
-                                    Market Open
-                                </Badge>
+                                {isMarketOpen && (
+                                    <Badge variant="secondary" className="bg-primary/10 text-primary border-primary/20 rounded-full">
+                                        Market Open
+                                    </Badge>
+                                )}
                             </div>
                             <div className="flex items-center gap-4">
                                 <Button variant="ghost" size="sm" className="rounded-xl">

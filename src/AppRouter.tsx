@@ -25,7 +25,7 @@ export const AppRoutes = {
   HOME: {
     path: "/",
     element: <DashboardPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   LOGIN: {
@@ -43,37 +43,37 @@ export const AppRoutes = {
   STOCK: {
     path: "/stock/:symbol",
     element: <StockPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   MARKETS: {
     path: "/markets",
     element: <MarketsPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   PORTFOLIO: {
     path: "/portfolio",
     element: <PortfolioPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   NEWS: {
     path: "/news",
     element: <NewsPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   ANALYTICS: {
     path: "/analytics",
     element: <AnalyticsPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   WATCHLIST: {
     path: "/watchlist",
     element: <WatchlistPage />,
-    auth: false,
+    auth: true,
     layout: <DashboardLayout />,
   },
   NOT_FOUND: {
@@ -99,7 +99,7 @@ export default function AppRouter(): JSX.Element {
         key={`layout-${i}`}
         element={
           routes.some(route => route.auth) ? (
-            <AuthRoutes redirectTo="/auth/login">
+            <AuthRoutes redirectTo="/login">
               {layout}
             </AuthRoutes>
           ) : (

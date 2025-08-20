@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { TradingViewChart } from "./trading-view-chart"
@@ -7,9 +7,18 @@ import { Watchlist } from "./watchlist"
 import { OrderBook } from "./order-book"
 import { TradingPanel } from "./trading-panel"
 import { Portfolio } from "./portfolio"
+import { usePortfolio } from "../contexts/portfolioContext"
+import { Stock } from "../types/Stock"
 
 export function TradingDashboard() {
   const [activeSymbol, setActiveSymbol] = useState("AAPL")
+  const portfolio = usePortfolio();
+  const [activeStock, setActiveStock] = useState<Stock | undefined>(undefined);
+
+  useEffect(() => {
+    const stock = portfolio?.getStocks(activeSymbol)?.[0];
+    setActiveStock(stock);
+  }, [activeSymbol, portfolio]);
 
   return (
     <div className="p-6 space-y-6">
