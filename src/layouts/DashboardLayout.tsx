@@ -21,7 +21,7 @@ export default function DashboardLayout() {
 
 
      const navigation = [
-        { id: "dashboard", label: "Dashboard", icon: BarChart3 },
+        { id: "/", label: "Dashboard", icon: BarChart3 },
         { id: "markets", label: "Markets", icon: TrendingUp },
         { id: "portfolio", label: "Portfolio", icon: Wallet },
         { id: "analytics", label: "Analytics", icon: PieChart },

@@ -2,7 +2,7 @@ import { QueryClient } from "@tanstack/react-query";
 import { client } from "../generated/api/requests";
 
 client.setConfig({
-    baseUrl: "https://localhost:44313",
+    baseUrl: "https://stockflow-f2gf.onrender.com/",
     credentials: "include",
     throwOnError: true,
 });
