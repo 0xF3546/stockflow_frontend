@@ -10,6 +10,8 @@ type PortfolioContextType = {
   removeFromPortfolio: (ticker: string, quantity: number) => void;
   getStocks: (ticker: string) => Stock[] | undefined;
   getStockAmount: (ticker: string) => number | undefined;
+  proceedBuyOrder: (order: { symbol: string; quantity: number; price: number; orderType: string }) => void;
+  proceedSellOrder: (order: { symbol: string; quantity: number; price: number; orderType: string }) => void;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -77,12 +79,24 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     return getStocks(ticker).length;
   };
 
+  const proceedBuyOrder = (order: { symbol: string; quantity: number; price: number; orderType: string }) => {
+    // TODO
+    addToPortfolio(order.symbol, order.quantity);
+  };
+
+  const proceedSellOrder = (order: { symbol: string; quantity: number; price: number; orderType: string }) => {
+    // TODO
+    removeFromPortfolio(order.symbol, order.quantity);
+  };
+
   const values = {
     portfolio,
     addToPortfolio,
     removeFromPortfolio,
     getStocks,
-    getStockAmount
+    getStockAmount,
+    proceedBuyOrder,
+    proceedSellOrder
   }
 
   return (

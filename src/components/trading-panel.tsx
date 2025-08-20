@@ -34,7 +34,7 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
     };
 
     // Workaround
-    portfolio?.removeFromPortfolio(sellOrder.symbol, sellOrder.quantity);
+    portfolio?.proceedSellOrder(sellOrder);
   };
 
   const handleBuy = () => {
@@ -48,7 +48,7 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
     };
 
     //Workaround
-    portfolio?.addToPortfolio(buyOrder.symbol, buyOrder.quantity);
+    portfolio?.proceedBuyOrder(buyOrder);
   };
 
   return (
