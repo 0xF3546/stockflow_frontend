@@ -48,12 +48,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return;
     }
     setPortfolio((prev) => [...prev, { ...stock, quantity }]);
-    buyStock({
-      body: {
-        quantity,
-        stock_symbol: ticker
-      }
-    });
   };
 
   const removeFromPortfolio = (ticker: string, quantity: number) => {
@@ -63,12 +57,6 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       return;
     }
     setPortfolio((prev) => prev.filter((s) => s.symbol !== stock.symbol));
-    sellStock({
-      body: {
-        quantity,
-        stock_symbol: ticker
-      }
-    });
   };
 
   const getStocks = (ticker: string) => {
@@ -80,13 +68,25 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   };
 
   const proceedBuyOrder = (order: { symbol: string; quantity: number; price: number; orderType: string }) => {
-    // TODO
     addToPortfolio(order.symbol, order.quantity);
+
+    buyStock({
+      body: {
+        quantity: order.quantity,
+        stock_symbol: order.symbol
+      }
+    });
   };
 
   const proceedSellOrder = (order: { symbol: string; quantity: number; price: number; orderType: string }) => {
     // TODO
     removeFromPortfolio(order.symbol, order.quantity);
+    sellStock({
+      body: {
+        quantity: order.quantity,
+        stock_symbol: order.symbol
+      }
+    });
   };
 
   const values = {

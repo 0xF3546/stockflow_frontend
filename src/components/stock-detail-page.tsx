@@ -7,6 +7,7 @@ import { Input } from "./ui/input"
 import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { DollarSign, BarChart3, Clock, Star, StarOff, ArrowUpRight, ArrowDownRight } from "lucide-react"
+import { usePortfolio } from "../contexts/portfolioContext"
 
 interface StockDetailPageProps {
   symbol: string
@@ -87,6 +88,8 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
     },
   }
 
+  const portfolio = usePortfolio();
+
   const stock = stockData[symbol as keyof typeof stockData] || stockData.AAPL
   const isPositive = stock.change >= 0
 
@@ -159,6 +162,21 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
     // Reset form
     setQuantity("")
     setPrice("")
+    if (action === "buy") {
+      portfolio?.proceedBuyOrder({
+        symbol,
+        quantity: Number(quantity),
+        price: Number(price),
+        orderType,
+      })
+    } else {
+      portfolio?.proceedSellOrder({
+        symbol,
+        quantity: Number(quantity),
+        price: Number(price),
+        orderType,
+      })
+    } 
   }
 
   return (
