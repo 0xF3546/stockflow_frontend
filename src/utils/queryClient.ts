@@ -3,8 +3,16 @@ import { client } from "../generated/api/requests";
 
 client.setConfig({
     baseUrl: "https://stockflow-f2gf.onrender.com/",
-    credentials: "include",
     throwOnError: true,
+});
+
+// Interceptor to add auth token to requests
+client.interceptors.request.use((request) => {
+    const token = localStorage.getItem("token");
+    if (token) {
+        request.headers.set("Authorization", `Bearer ${token}`);
+    }
+    return request;
 });
 
 export const queryClient = new QueryClient({

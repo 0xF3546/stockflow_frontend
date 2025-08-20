@@ -5,6 +5,7 @@ import { useStocks } from "../contexts/stockContext";
 import { BarChart3, TrendingUp, Wallet, Bell, Search, Menu, Newspaper, PieChart, Activity } from "lucide-react"
 import { Badge } from "../components/ui/badge";
 import { AppRoutes } from "../AppRouter";
+import { useAuthProvider } from "../hooks/useAuthProvider";
 
 export default function DashboardLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -12,6 +13,7 @@ export default function DashboardLayout() {
     const [showSuggestions, setShowSuggestions] = useState(false)
     const stocks = useStocks();
     const navigate = useNavigate();
+    const { currentUser } = useAuthProvider();
 
     const filteredStocks = stocks ? stocks.stocks.filter(
         (stock) =>
@@ -140,7 +142,7 @@ export default function DashboardLayout() {
                                     <Bell className="h-5 w-5" />
                                 </Button>
                                 <div className="text-right">
-                                    <p className="text-sm font-medium">John Trader</p>
+                                    <p className="text-sm font-medium">{currentUser?.username}</p>
                                     <p className="text-xs text-muted-foreground">Premium Account</p>
                                 </div>
                             </div>

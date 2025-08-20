@@ -14,7 +14,10 @@ export default function RegisterPage() {
         try {
             e.preventDefault();
             setLoading(true);
-            await register(form);
+            await register({
+                username: form.user,
+                password: form.password
+            });
         } catch (err: any) {
             console.error(err);
             if (err.response) {

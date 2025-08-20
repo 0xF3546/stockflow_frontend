@@ -18,34 +18,58 @@ export function AuthProvider({ children }: IAuth) {
     localStorage.setItem("user", JSON.stringify(currentUser));
   }, [currentUser]);
 
-  async function login({ username, password }: { username: string; password: string }) {
+  async function login(user: IUser) {
     try {
-      const res = await _login({ body: { username, password } });
+      setLoading(true);
+      setError(null);
+      const res = await _login({ body: {
+        password: user.password ?? '',
+        username: user.username ?? ''
+      } });
       const data = res?.data || {};
       const token = data.token;
-      if (!token) return;
-      const user = { username, ...data };
-      setCurrentUser((_) => ({
-        ..._,
-        name: data.username ?? username
-      }));
+      if (!token) {
+        setError("Login failed: No token received");
+        return;
+      }
+
+      const u = {
+        username: data.username ?? user.username,
+      };
+      
+      setCurrentUser(u);
       localStorage.setItem("token", token);
-      localStorage.setItem("user", JSON.stringify(user));
+      localStorage.setItem("user", JSON.stringify(u));
+      
       const searchParams = new URLSearchParams(window.location.search);
       const redirectUrl = searchParams.get("redirect") || "/";
       window.location.href = redirectUrl;
-    } catch (err) {
-      // Fehlerbehandlung nach Bedarf
+    } catch (err: any) {
+      setError(err?.message || "Login failed");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
-  async function register(user: { username: string; email: string; password: string }) {
+  async function register(user: IUser) {
     try {
-      const res = await _register({ body: user });
-      if (!res.response.ok) return;
-      await login({ username: user.username, password: user.password });
-    } catch (err) {
-      // Fehlerbehandlung nach Bedarf
+      setLoading(true);
+      setError(null);
+      const res = await _register({ body: {
+        password: user.password ?? "",
+        username: user.username ?? ""
+      } });
+      if (!res.response.ok) {
+        setError("Registration failed");
+        return;
+      }
+      await login(user);
+    } catch (err: any) {
+      setError(err?.message || "Registration failed");
+      console.error("Registration error:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -56,7 +80,15 @@ export function AuthProvider({ children }: IAuth) {
   }
 
   return (
-    <authContext.Provider value={{ currentUser, setCurrentUser, login, register, logout }}>
+    <authContext.Provider value={{ 
+      currentUser, 
+      setCurrentUser, 
+      login, 
+      register, 
+      logout, 
+      error, 
+      loading 
+    }}>
       {children}
     </authContext.Provider>
   );

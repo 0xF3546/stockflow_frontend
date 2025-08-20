@@ -14,7 +14,10 @@ export default function LoginPage() {
         try {
             e.preventDefault();
             setLoading(true);
-            await login(form);
+            await login({
+                username: form.user,
+                password: form.password
+            });
         } catch (err: any) {
             console.error(err);
             if (err.response) {
