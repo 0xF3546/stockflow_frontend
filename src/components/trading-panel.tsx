@@ -9,6 +9,7 @@ import { ShoppingCart } from "lucide-react"
 import { usePortfolio } from "../contexts/portfolioContext"
 import { useAuthProvider } from "../hooks/useAuthProvider"
 import { useStocks } from "../contexts/stockContext"
+import { models_OrderType } from "../generated/api/requests"
 
 interface TradingPanelProps {
   symbol: string
@@ -16,7 +17,7 @@ interface TradingPanelProps {
 
 export function TradingPanel({ symbol }: TradingPanelProps) {
   const { currentUser } = useAuthProvider();
-  const [orderType, setOrderType] = useState("market")
+  const [orderType, setOrderType] = useState<models_OrderType>(models_OrderType.OrderTypeMarket)
   const [quantity, setQuantity] = useState("")
   const [price, setPrice] = useState("")
   const portfolio = usePortfolio();
@@ -79,15 +80,17 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
           <TabsContent value="buy" className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label htmlFor="order-type">Order Type</Label>
-              <Select value={orderType} onValueChange={setOrderType}>
+              <Select
+                value={orderType.toString()}
+                onValueChange={(val) => setOrderType(val as unknown as models_OrderType)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="market">Market Order</SelectItem>
-                  <SelectItem value="limit">Limit Order</SelectItem>
-                  <SelectItem value="stop">Stop Order</SelectItem>
-                  <SelectItem value="stop-limit">Stop-Limit Order</SelectItem>
+                  <SelectItem value={models_OrderType.OrderTypeMarket.toString()}>Market Order</SelectItem>
+                  <SelectItem value={models_OrderType.OrderTypeLimit.toString()}>Limit Order</SelectItem>
+                  <SelectItem value={models_OrderType.OrderTypeStop.toString()}>Stop Order</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -103,7 +106,7 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
               />
             </div>
 
-            {orderType !== "market" && (
+            {orderType !== models_OrderType.OrderTypeMarket && (
               <div className="space-y-2">
                 <Label htmlFor="price">Price</Label>
                 <Input
@@ -138,15 +141,17 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
           <TabsContent value="sell" className="space-y-4 mt-4">
             <div className="space-y-2">
               <Label htmlFor="sell-order-type">Order Type</Label>
-              <Select value={orderType} onValueChange={setOrderType}>
+              <Select
+                value={orderType.toString()}
+                onValueChange={(val) => setOrderType(val as unknown as models_OrderType)}
+              >
                 <SelectTrigger>
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="market">Market Order</SelectItem>
-                  <SelectItem value="limit">Limit Order</SelectItem>
-                  <SelectItem value="stop">Stop Order</SelectItem>
-                  <SelectItem value="stop-limit">Stop-Limit Order</SelectItem>
+                  <SelectItem value={models_OrderType.OrderTypeMarket.toString()}>Market Order</SelectItem>
+                  <SelectItem value={models_OrderType.OrderTypeLimit.toString()}>Limit Order</SelectItem>
+                  <SelectItem value={models_OrderType.OrderTypeStop.toString()}>Stop Order</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -163,7 +168,7 @@ export function TradingPanel({ symbol }: TradingPanelProps) {
               <p className="text-xs text-muted-foreground">Available: {portfolio?.getStockAmount(symbol)} Shares</p>
             </div>
 
-            {orderType !== "market" && (
+            {orderType !== models_OrderType.OrderTypeMarket && (
               <div className="space-y-2">
                 <Label htmlFor="sell-price">Price</Label>
                 <Input

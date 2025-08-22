@@ -7,6 +7,7 @@ import { Badge } from "../components/ui/badge";
 import { AppRoutes } from "../AppRouter";
 import { useAuthProvider } from "../hooks/useAuthProvider";
 import { useGetApiStocksSearch } from "../generated/api/queries";
+import { usePortfolio } from "../contexts/portfolioContext";
 
 export default function DashboardLayout() {
     const [sidebarOpen, setSidebarOpen] = useState(true)
@@ -14,6 +15,7 @@ export default function DashboardLayout() {
     const [showSuggestions, setShowSuggestions] = useState(false)
     const navigate = useNavigate();
     const { currentUser } = useAuthProvider();
+    const portfolio = usePortfolio();
 
     const { data: stocks, refetch, isFetching } = useGetApiStocksSearch({
         query: {
@@ -103,7 +105,7 @@ export default function DashboardLayout() {
                         <div className="p-4 border-t border-sidebar-border">
                             <div className="bg-sidebar-accent rounded-xl p-3">
                                 <p className="text-sm font-medium text-sidebar-accent-foreground">Account Balance</p>
-                                <p className="text-lg font-mono font-bold text-primary">$125,430.50</p>
+                                <p className="text-lg font-mono font-bold text-primary">${portfolio?.getAvailableCash()}</p>
                                 <p className="text-xs text-muted-foreground">+2.4% today</p>
                             </div>
                         </div>

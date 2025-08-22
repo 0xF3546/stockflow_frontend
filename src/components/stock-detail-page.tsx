@@ -8,6 +8,7 @@ import { Label } from "./ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "./ui/select"
 import { DollarSign, BarChart3, Clock, Star, StarOff, ArrowUpRight, ArrowDownRight } from "lucide-react"
 import { usePortfolio } from "../contexts/portfolioContext"
+import { models_OrderType } from "../generated/api/requests"
 
 interface StockDetailPageProps {
   symbol: string
@@ -15,7 +16,7 @@ interface StockDetailPageProps {
 
 export function StockDetailPage({ symbol }: StockDetailPageProps) {
   const [isWatchlisted, setIsWatchlisted] = useState(false)
-  const [orderType, setOrderType] = useState("market")
+  const [orderType, setOrderType] = useState<models_OrderType>(models_OrderType.OrderTypeMarket)
   const [quantity, setQuantity] = useState("")
   const [price, setPrice] = useState("")
 
@@ -157,7 +158,7 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
       symbol,
       quantity,
       orderType,
-      price: orderType === "limit" ? price : "market",
+      price: orderType === models_OrderType.OrderTypeLimit ? price : models_OrderType.OrderTypeMarket,
     })
     // Reset form
     setQuantity("")
@@ -283,14 +284,17 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
                 <TabsContent value="buy" className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <Label>Order Type</Label>
-                    <Select value={orderType} onValueChange={setOrderType}>
+                    <Select
+                      value={orderType.toString()}
+                      onValueChange={(val) => setOrderType(val as unknown as models_OrderType)}
+                    >
                       <SelectTrigger className="rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="market">Market Order</SelectItem>
-                        <SelectItem value="limit">Limit Order</SelectItem>
-                        <SelectItem value="stop">Stop Order</SelectItem>
+                        <SelectItem value={models_OrderType.OrderTypeMarket.toString()}>Market Order</SelectItem>
+                        <SelectItem value={models_OrderType.OrderTypeLimit.toString()}>Limit Order</SelectItem>
+                        <SelectItem value={models_OrderType.OrderTypeStop.toString()}>Stop Order</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -306,7 +310,7 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
                     />
                   </div>
 
-                  {orderType === "limit" && (
+                  {orderType === models_OrderType.OrderTypeLimit && (
                     <div className="space-y-2">
                       <Label>Limit Price</Label>
                       <Input
@@ -331,14 +335,17 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
                 <TabsContent value="sell" className="space-y-4 mt-4">
                   <div className="space-y-2">
                     <Label>Order Type</Label>
-                    <Select value={orderType} onValueChange={setOrderType}>
+                    <Select
+                      value={orderType.toString()}
+                      onValueChange={(val) => setOrderType(val as unknown as models_OrderType)}
+                    >
                       <SelectTrigger className="rounded-xl">
                         <SelectValue />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="market">Market Order</SelectItem>
-                        <SelectItem value="limit">Limit Order</SelectItem>
-                        <SelectItem value="stop">Stop Order</SelectItem>
+                        <SelectItem value={models_OrderType.OrderTypeMarket.toString()}>Market Order</SelectItem>
+                        <SelectItem value={models_OrderType.OrderTypeLimit.toString()}>Limit Order</SelectItem>
+                        <SelectItem value={models_OrderType.OrderTypeStop.toString()}>Stop Order</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -354,7 +361,7 @@ export function StockDetailPage({ symbol }: StockDetailPageProps) {
                     />
                   </div>
 
-                  {orderType === "limit" && (
+                  {orderType === models_OrderType.OrderTypeLimit && (
                     <div className="space-y-2">
                       <Label>Limit Price</Label>
                       <Input

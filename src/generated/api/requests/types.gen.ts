@@ -5,8 +5,17 @@ export type handlers_BalanceResponse = {
 };
 
 export type handlers_BuyRequest = {
+    /**
+     * Optional, for LIMIT orders
+     */
+    limitPrice?: number;
+    orderType: models_OrderType;
     quantity: number;
-    stock_symbol: string;
+    stockSymbol: string;
+    /**
+     * Optional, for STOP orders
+     */
+    stopPrice?: number;
 };
 
 export type handlers_ErrorResponse = {
@@ -35,19 +44,33 @@ export type handlers_RegisterRequest = {
 
 export type handlers_RegisterResponse = {
     cash_balance?: number;
-    id?: number;
     token?: string;
     username?: string;
 };
 
 export type handlers_SellRequest = {
+    /**
+     * Optional, for LIMIT orders
+     */
+    limitPrice?: number;
+    orderType: models_OrderType;
     quantity: number;
-    stock_symbol: string;
+    stockSymbol: string;
+    /**
+     * Optional, for STOP orders
+     */
+    stopPrice?: number;
 };
 
 export type handlers_SuccessResponse = {
     message?: string;
 };
+
+export enum models_OrderType {
+    OrderTypeMarket = 1,
+    OrderTypeLimit = 2,
+    OrderTypeStop = 3
+}
 
 export type models_Portfolio = {
     quantity?: number;
