@@ -2,13 +2,14 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Stock } from "../types/Stock";
 import { useGetApiPortfolio, usePostApiBuy, usePostApiSell } from "../generated/api/queries";
 import { useStocks } from "./stockContext";
-import { models_OrderType, models_Portfolio } from "../generated/api/requests";
+import { handlers_PortfolioItem, models_OrderType } from "../generated/api/requests";
 
 type StockWithQuantity = Stock & { quantity: number };
 
 type PortfolioContextType = {
-  portfolio: models_Portfolio[];
+  portfolio: handlers_PortfolioItem[];
   getAvailableCash: () => number;
+  getPortfolioTotal: () => number;
   addToPortfolio: (ticker: string, quantity: number) => void;
   removeFromPortfolio: (ticker: string, quantity: number) => void;
   getStocks: (ticker: string) => StockWithQuantity[];
@@ -22,13 +23,17 @@ const PortfolioContext = createContext<PortfolioContextType | undefined>(undefin
 export const usePortfolio = () => useContext(PortfolioContext);
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [portfolio, setPortfolio] = useState<models_Portfolio[]>([]);
+  const [portfolio, setPortfolio] = useState<handlers_PortfolioItem[]>([]);
   const { data, refetch } = useGetApiPortfolio();
   const { mutateAsync: buyStock } = usePostApiBuy();
   const { mutateAsync: sellStock } = usePostApiSell();
   const stocks = useStocks();
 
   const getAvailableCash = () => {
+    return data?.cash_balance ?? 0;
+  };
+
+  const getPortfolioTotal = () => {
     return data?.total_value ?? 0;
   };
 
@@ -36,7 +41,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     console.log("Fetching portfolio data...");
     if (data) {
       setPortfolio((_) => {
-        return ((data.portfolio ?? []) as models_Portfolio[]).map((item) => ({
+        return ((data.portfolio ?? []) as handlers_PortfolioItem[]).map((item) => ({
           quantity: item.quantity,
           stockSymbol: item.stockSymbol
         }));
@@ -72,7 +77,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           }
         }
         return s;
-      }).filter((s) => s !== null) as models_Portfolio[];
+      }).filter((s) => s !== null) as handlers_PortfolioItem[];
     });
   };
 
@@ -132,7 +137,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     getStockAmount,
     proceedBuyOrder,
     proceedSellOrder,
-    getAvailableCash
+    getAvailableCash,
+    getPortfolioTotal
   }
 
   return (

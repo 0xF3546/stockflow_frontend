@@ -32,8 +32,14 @@ export type handlers_LoginResponse = {
     username?: string;
 };
 
+export type handlers_PortfolioItem = {
+    quantity?: number;
+    stockSymbol?: string;
+};
+
 export type handlers_PortfolioResponse = {
-    portfolio?: Array<models_Portfolio>;
+    cash_balance?: number;
+    portfolio?: Array<handlers_PortfolioItem>;
     total_value?: number;
 };
 
@@ -71,12 +77,6 @@ export enum models_OrderType {
     OrderTypeLimit = 2,
     OrderTypeStop = 3
 }
-
-export type models_Portfolio = {
-    quantity?: number;
-    stockSymbol?: string;
-    userID?: number;
-};
 
 export type types_StockSearchResult = {
     companyName?: string;
