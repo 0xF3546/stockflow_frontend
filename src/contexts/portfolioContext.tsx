@@ -60,7 +60,20 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       console.error("Stock not found:", ticker);
       return;
     }
-    setPortfolio((prev) => prev.filter((s) => s.stockSymbol !== stock.symbol));
+    setPortfolio((prev) => {
+      return prev.map((s) => {
+        if (s.stockSymbol === stock.symbol) {
+          const currentQuantity = typeof s.quantity === 'number' ? s.quantity : 0;
+          const newQuantity = currentQuantity - quantity;
+          if (newQuantity > 0) {
+            return { ...s, quantity: newQuantity };
+          } else {
+            return null;
+          }
+        }
+        return s;
+      }).filter((s) => s !== null) as models_Portfolio[];
+    });
   };
 
   const getStocks = (ticker: string): StockWithQuantity[] => {
