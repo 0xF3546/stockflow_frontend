@@ -142,8 +142,8 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
   }
 
   return (
-    <PortfolioContext.Provider value={values}>
+    <PortfolioContext value={values}>
       {children}
-    </PortfolioContext.Provider>
+    </PortfolioContext>
   );
 };

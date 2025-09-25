@@ -44,8 +44,8 @@ export const StockProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }
 
   return (
-    <StockContext.Provider value={values}>
+    <StockContext value={values}>
       {children}
-    </StockContext.Provider>
+    </StockContext>
   );
 };

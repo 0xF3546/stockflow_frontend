@@ -4,7 +4,7 @@ import { IAuth } from "../types/IAuth";
 import { IAuthContext } from "../types/IAuthContext";
 import { usePostAuthLogin, usePostAuthRegister } from "../generated/api/queries";
 
-export const authContext = createContext<IAuthContext | null>(null);
+export const authContext = createContext<IAuthContext | undefined>(undefined);
 
 export function AuthProvider({ children }: IAuth) {
   const lStore: any = localStorage.getItem("user");
