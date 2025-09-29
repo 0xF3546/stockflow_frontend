@@ -2,13 +2,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
 import { Badge } from "../components/ui/badge"
 import { Button } from "../components/ui/button"
 import { TrendingUp, TrendingDown, DollarSign } from "lucide-react"
-
-const holdings = [
-  { symbol: "AAPL", name: "Apple Inc.", shares: 150, avgPrice: 165.2, currentPrice: 175.43, value: 26314.5 },
-  { symbol: "GOOGL", name: "Alphabet Inc.", shares: 25, avgPrice: 2750.0, currentPrice: 2847.52, value: 71188.0 },
-  { symbol: "MSFT", name: "Microsoft Corp.", shares: 80, avgPrice: 350.0, currentPrice: 378.91, value: 30312.8 },
-  { symbol: "TSLA", name: "Tesla Inc.", shares: 45, avgPrice: 280.0, currentPrice: 248.73, value: 11192.85 },
-]
+import { usePortfolio } from "../contexts/portfolioContext"
+import { useStocks } from "../contexts/stockContext"
 
 const transactions = [
   { type: "BUY", symbol: "AAPL", shares: 50, price: 172.3, date: "2024-01-15", total: 8615.0 },
@@ -17,10 +12,14 @@ const transactions = [
 ]
 
 const PortfolioPage = () => {
-  const totalValue = holdings.reduce((sum, holding) => sum + holding.value, 0)
-  const totalCost = holdings.reduce((sum, holding) => sum + holding.shares * holding.avgPrice, 0)
-  const totalGainLoss = totalValue - totalCost
-  const totalGainLossPercent = (totalGainLoss / totalCost) * 100
+    const portfolio = usePortfolio();
+  const stocks = useStocks();
+  const totalValue = portfolio
+    ? portfolio.getPortfolioTotal() + portfolio.getAvailableCash()
+    : 0;
+  const totalCost = portfolio?.portfolio.reduce((sum, holding) => sum + (holding.quantity ?? 0) * (holding.avg_price ?? 0), 0) ?? 0;
+  const totalGainLoss = totalValue - totalCost;
+  const totalGainLossPercent = (totalGainLoss / totalCost) * 100;
 
   return (
     <div className="p-6 space-y-6">
@@ -39,7 +38,7 @@ const PortfolioPage = () => {
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total Value</CardTitle>
+            <CardTitle className="text-sm font-medium text-muted-foreground"></CardTitle>
           </CardHeader>
           <CardContent>
             <p className="text-3xl font-mono font-bold">${totalValue.toLocaleString()}</p>
@@ -87,23 +86,25 @@ const PortfolioPage = () => {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {holdings.map((holding) => {
-                  const gainLoss = holding.value - holding.shares * holding.avgPrice
-                  const gainLossPercent = (gainLoss / (holding.shares * holding.avgPrice)) * 100
+                {portfolio?.portfolio.map((holding) => {
+                  const stock = stocks?.getStock(holding.stockSymbol ?? "");
+                  if (!stock) return null;
+                  const gainLoss = stock.price * (holding.quantity ?? 0) - (holding.quantity ?? 0) * (holding.avg_price ?? 0);
+                  const gainLossPercent = (gainLoss / ((holding.quantity ?? 0) * (holding.avg_price ?? 0))) * 100;
 
                   return (
-                    <div key={holding.symbol} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
+                    <div key={holding.stockSymbol} className="flex items-center justify-between p-4 bg-muted/30 rounded-xl">
                       <div className="flex items-center gap-4">
                         <div>
-                          <p className="font-semibold">{holding.symbol}</p>
-                          <p className="text-sm text-muted-foreground">{holding.name}</p>
+                          <p className="font-semibold">{holding.stockSymbol}</p>
+                          <p className="text-sm text-muted-foreground">{stocks?.getStock(holding.stockSymbol ?? "")?.name}</p>
                         </div>
                         <Badge variant="outline" className="rounded-full">
-                          {holding.shares} shares
+                          {holding.quantity} shares
                         </Badge>
                       </div>
                       <div className="text-right">
-                        <p className="font-mono font-bold">${holding.value.toLocaleString()}</p>
+                        <p className="font-mono font-bold">${stock.price.toLocaleString()}</p>
                         <div className="flex items-center gap-2">
                           {gainLoss >= 0 ? (
                             <TrendingUp className="h-4 w-4 text-primary" />
@@ -116,7 +117,7 @@ const PortfolioPage = () => {
                           </span>
                         </div>
                         <p className="text-xs text-muted-foreground">
-                          Avg: ${holding.avgPrice.toFixed(2)} | Current: ${holding.currentPrice.toFixed(2)}
+                          Avg: ${(holding.avg_price ?? 0).toFixed(2)} | Current: ${stock.price.toFixed(2)}
                         </p>
                       </div>
                     </div>

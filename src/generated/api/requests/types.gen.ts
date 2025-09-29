@@ -22,6 +22,14 @@ export type handlers_ErrorResponse = {
     error?: string;
 };
 
+export type handlers_FXRateResponse = {
+    daily_change?: number;
+    from_currency?: string;
+    percent_change?: number;
+    rate?: number;
+    to_currency?: string;
+};
+
 export type handlers_LoginRequest = {
     password: string;
     username: string;
@@ -32,14 +40,9 @@ export type handlers_LoginResponse = {
     username?: string;
 };
 
-export type handlers_PortfolioItem = {
-    quantity?: number;
-    stockSymbol?: string;
-};
-
 export type handlers_PortfolioResponse = {
     cash_balance?: number;
-    portfolio?: Array<handlers_PortfolioItem>;
+    portfolio?: Array<types_PortfolioItem>;
     total_value?: number;
 };
 
@@ -78,8 +81,16 @@ export enum models_OrderType {
     OrderTypeStop = 3
 }
 
+export type types_PortfolioItem = {
+    avg_price?: number;
+    curr_price?: number;
+    percentage_change?: number;
+    quantity?: number;
+    stockSymbol?: string;
+};
+
 export type types_StockSearchResult = {
-    companyName?: string;
+    company_name?: string;
     symbol?: string;
 };
 
@@ -97,6 +108,23 @@ export type PostApiBuyData = {
 export type PostApiBuyResponse = (handlers_SuccessResponse);
 
 export type PostApiBuyError = (handlers_ErrorResponse);
+
+export type GetApiFxData = {
+    query: {
+        /**
+         * From Currency
+         */
+        from: string;
+        /**
+         * To Currency
+         */
+        to: string;
+    };
+};
+
+export type GetApiFxResponse = (handlers_FXRateResponse);
+
+export type GetApiFxError = (handlers_ErrorResponse);
 
 export type GetApiPortfolioResponse = (handlers_PortfolioResponse);
 
@@ -125,6 +153,19 @@ export type GetApiStocksSearchData = {
 export type GetApiStocksSearchResponse = (Array<types_StockSearchResult>);
 
 export type GetApiStocksSearchError = (handlers_ErrorResponse);
+
+export type PostApiStocksBySymbolFetchData = {
+    path: {
+        /**
+         * Stock Symbol
+         */
+        symbol: string;
+    };
+};
+
+export type PostApiStocksBySymbolFetchResponse = (handlers_SuccessResponse);
+
+export type PostApiStocksBySymbolFetchError = (handlers_ErrorResponse);
 
 export type PostAuthLoginData = {
     /**

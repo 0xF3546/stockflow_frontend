@@ -1,7 +1,6 @@
 import { Outlet, useNavigate } from "react-router";
 import { Button } from "../components/ui/button";
 import { useState, useEffect } from "react";
-import { useStocks } from "../contexts/stockContext";
 import { BarChart3, TrendingUp, Wallet, Bell, Search, Menu, Newspaper, PieChart, Activity } from "lucide-react"
 import { Badge } from "../components/ui/badge";
 import { AppRoutes } from "../AppRouter";
@@ -17,7 +16,7 @@ export default function DashboardLayout() {
     const { currentUser } = useAuthProvider();
     const portfolio = usePortfolio();
 
-    const { data: stocks, refetch, isFetching } = useGetApiStocksSearch({
+    const { data: stocks, refetch } = useGetApiStocksSearch({
         query: {
             q: searchQuery
         }
@@ -34,12 +33,12 @@ export default function DashboardLayout() {
         if (searchQuery) {
             refetch();
         }
-    }, [searchQuery]);
+    }, [searchQuery]) // eslint-disable-line react-hooks/exhaustive-deps
 
     const filteredStocks = stocks ? stocks.filter(
         (stock) =>
             (stock.symbol && stock.symbol.toLowerCase().includes(searchQuery.toLowerCase())) ||
-            (stock.companyName && stock.companyName.toLowerCase().includes(searchQuery.toLowerCase())),
+            (stock.company_name && stock.company_name.toLowerCase().includes(searchQuery.toLowerCase())),
     ) : []
 
     function isMarketOpenNow() {
@@ -105,8 +104,8 @@ export default function DashboardLayout() {
                         <div className="p-4 border-t border-sidebar-border">
                             <div className="bg-sidebar-accent rounded-xl p-3">
                                 <p className="text-sm font-medium text-sidebar-accent-foreground">Account Balance</p>
-                                <p className="text-lg font-mono font-bold text-primary">${portfolio?.getAvailableCash()}</p>
-                                <p className="text-xs text-muted-foreground">+2.4% today</p>
+                                <p className="text-lg font-mono font-bold text-primary">${portfolio?.getAvailableCash().toFixed(2)}</p>
+                                <p className="text-xs text-muted-foreground">{portfolio?.getTotalChangeTodayPercent() ?? 0 >= 0 ? "+" : "-"}{portfolio?.getTotalChangeTodayPercent().toFixed(2)}% today</p>
                             </div>
                         </div>
                     )}
@@ -143,7 +142,7 @@ export default function DashboardLayout() {
                                                     >
                                                         <div>
                                                             <div className="font-mono font-semibold text-sm">{stock.symbol}</div>
-                                                            <div className="text-xs text-muted-foreground">{stock.companyName}</div>
+                                                            <div className="text-xs text-muted-foreground">{stock.company_name}</div>
                                                         </div>
                                                         {/*<div className="text-right">
                                                             <div className="font-mono text-sm">{stock.price}</div>

@@ -1,6 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card"
 import { Badge } from "./ui/badge"
 import { Wallet, TrendingUp, TrendingDown } from "lucide-react"
+import { usePortfolio } from "../contexts/portfolioContext"
+import { useStocks } from "../contexts/stockContext"
+import { types_PortfolioItem } from "../generated/api/requests"
 
 const portfolioData = {
   totalValue: "$127,543.89",
@@ -16,6 +19,8 @@ const portfolioData = {
 }
 
 export function Portfolio() {
+  const portfolio = usePortfolio();
+  const stocks = useStocks();
   return (
     <Card className="h-full">
       <CardHeader>
@@ -32,7 +37,7 @@ export function Portfolio() {
               {portfolioData.dayChange} ({portfolioData.dayChangePercent})
             </Badge>
           </div>
-          <p className="text-2xl font-bold">{portfolioData.totalValue}</p>
+          <p className="text-2xl font-bold">{portfolio?.getPortfolioTotal().toFixed(2)}</p>
           <div className="flex items-center gap-2 mt-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="text-sm text-primary font-semibold">
@@ -43,22 +48,22 @@ export function Portfolio() {
 
         <div className="space-y-3">
           <h4 className="font-semibold text-sm">Top Positions</h4>
-          {portfolioData.positions.map((position) => (
-            <div key={position.symbol} className="flex items-center justify-between p-3 bg-muted rounded-lg">
+          {portfolio?.portfolio.map((position: types_PortfolioItem) => (
+            <div key={position.stockSymbol} className="flex items-center justify-between p-3 bg-muted rounded-lg">
               <div>
-                <p className="font-semibold text-sm">{position.symbol}</p>
-                <p className="text-xs text-muted-foreground">{position.shares} shares</p>
+                <p className="font-semibold text-sm">{position.stockSymbol}</p>
+                <p className="text-xs text-muted-foreground">{position.quantity} shares</p>
               </div>
               <div className="text-right">
-                <p className="font-semibold text-sm">{position.value}</p>
+                <p className="font-semibold text-sm">{stocks?.getStock(position.stockSymbol ?? '')?.price}</p>
                 <div className="flex items-center gap-1">
-                  {position.positive ? (
+                  {position.percentage_change ?? 0 >= 0 ? (
                     <TrendingUp className="h-3 w-3 text-primary" />
                   ) : (
                     <TrendingDown className="h-3 w-3 text-destructive" />
                   )}
-                  <span className={`text-xs font-medium ${position.positive ? "text-primary" : "text-destructive"}`}>
-                    {position.gainLoss}
+                  <span className={`text-xs font-medium ${position.percentage_change ?? 0 >= 0 ? "text-primary" : "text-destructive"}`}>
+                    {position.percentage_change?.toFixed(2)}%
                   </span>
                 </div>
               </div>

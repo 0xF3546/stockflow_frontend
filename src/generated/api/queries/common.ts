@@ -2,11 +2,15 @@
 
 import { type Options } from "@hey-api/client-fetch";
 import { UseQueryResult } from "@tanstack/react-query";
-import { getApiBalance, getApiPortfolio, getApiStocksSearch, getHealth, postApiBuy, postApiSell, postAuthLogin, postAuthRegister } from "../requests/services.gen";
+import { getApiBalance, getApiFx, getApiPortfolio, getApiStocksSearch, getHealth, postApiBuy, postApiSell, postApiStocksBySymbolFetch, postAuthLogin, postAuthRegister } from "../requests/services.gen";
 export type GetApiBalanceDefaultResponse = Awaited<ReturnType<typeof getApiBalance>>["data"];
 export type GetApiBalanceQueryResult<TData = GetApiBalanceDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useGetApiBalanceKey = "GetApiBalance";
 export const UseGetApiBalanceKeyFn = (clientOptions: Options<unknown, true> = {}, queryKey?: Array<unknown>) => [useGetApiBalanceKey, ...(queryKey ?? [clientOptions])];
+export type GetApiFxDefaultResponse = Awaited<ReturnType<typeof getApiFx>>["data"];
+export type GetApiFxQueryResult<TData = GetApiFxDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
+export const useGetApiFxKey = "GetApiFx";
+export const UseGetApiFxKeyFn = (clientOptions: Options<unknown, true>, queryKey?: Array<unknown>) => [useGetApiFxKey, ...(queryKey ?? [clientOptions])];
 export type GetApiPortfolioDefaultResponse = Awaited<ReturnType<typeof getApiPortfolio>>["data"];
 export type GetApiPortfolioQueryResult<TData = GetApiPortfolioDefaultResponse, TError = unknown> = UseQueryResult<TData, TError>;
 export const useGetApiPortfolioKey = "GetApiPortfolio";
@@ -25,6 +29,9 @@ export const UsePostApiBuyKeyFn = (mutationKey?: Array<unknown>) => [usePostApiB
 export type PostApiSellMutationResult = Awaited<ReturnType<typeof postApiSell>>;
 export const usePostApiSellKey = "PostApiSell";
 export const UsePostApiSellKeyFn = (mutationKey?: Array<unknown>) => [usePostApiSellKey, ...(mutationKey ?? [])];
+export type PostApiStocksBySymbolFetchMutationResult = Awaited<ReturnType<typeof postApiStocksBySymbolFetch>>;
+export const usePostApiStocksBySymbolFetchKey = "PostApiStocksBySymbolFetch";
+export const UsePostApiStocksBySymbolFetchKeyFn = (mutationKey?: Array<unknown>) => [usePostApiStocksBySymbolFetchKey, ...(mutationKey ?? [])];
 export type PostAuthLoginMutationResult = Awaited<ReturnType<typeof postAuthLogin>>;
 export const usePostAuthLoginKey = "PostAuthLogin";
 export const UsePostAuthLoginKeyFn = (mutationKey?: Array<unknown>) => [usePostAuthLoginKey, ...(mutationKey ?? [])];

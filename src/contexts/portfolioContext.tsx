@@ -2,12 +2,12 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { Stock } from "../types/Stock";
 import { useGetApiPortfolio, usePostApiBuy, usePostApiSell } from "../generated/api/queries";
 import { useStocks } from "./stockContext";
-import { handlers_PortfolioItem, models_OrderType } from "../generated/api/requests";
+import { models_OrderType, types_PortfolioItem } from "../generated/api/requests";
 
 type StockWithQuantity = Stock & { quantity: number };
 
 type PortfolioContextType = {
-  portfolio: handlers_PortfolioItem[];
+  portfolio: types_PortfolioItem[];
   getAvailableCash: () => number;
   getPortfolioTotal: () => number;
   addToPortfolio: (ticker: string, quantity: number) => void;
@@ -16,6 +16,8 @@ type PortfolioContextType = {
   getStockAmount: (ticker: string) => number;
   proceedBuyOrder: (order: { symbol: string; quantity: number; price: number; orderType: models_OrderType }) => void;
   proceedSellOrder: (order: { symbol: string; quantity: number; price: number; orderType: models_OrderType }) => void;
+  getTotalChangeToday: () => number;
+  getTotalChangeTodayPercent: () => number;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -23,7 +25,7 @@ const PortfolioContext = createContext<PortfolioContextType | undefined>(undefin
 export const usePortfolio = () => useContext(PortfolioContext);
 
 export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [portfolio, setPortfolio] = useState<handlers_PortfolioItem[]>([]);
+  const [portfolio, setPortfolio] = useState<types_PortfolioItem[]>([]);
   const { data, refetch } = useGetApiPortfolio();
   const { mutateAsync: buyStock } = usePostApiBuy();
   const { mutateAsync: sellStock } = usePostApiSell();
@@ -41,7 +43,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     console.log("Fetching portfolio data...");
     if (data) {
       setPortfolio((_) => {
-        return ((data.portfolio ?? []) as handlers_PortfolioItem[]).map((item) => ({
+        return ((data.portfolio ?? []) as types_PortfolioItem[]).map((item) => ({
           quantity: item.quantity,
           stockSymbol: item.stockSymbol
         }));
@@ -77,7 +79,7 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           }
         }
         return s;
-      }).filter((s) => s !== null) as handlers_PortfolioItem[];
+      }).filter((s) => s !== null) as types_PortfolioItem[];
     });
   };
 
@@ -129,6 +131,18 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     });
   };
 
+  const getTotalChangeToday = () => {
+    return data?.portfolio
+      ?.map((item) => (item.quantity ?? 0) * (item.percentage_change ?? 0) * (stocks?.getStock(item.stockSymbol ?? '')?.price ?? 0) / 100)
+      .reduce((acc: number, val) => acc + val, 0) ?? 0;
+  }
+
+  const getTotalChangeTodayPercent = () => {
+    return data?.portfolio
+      ?.map((item) => item.percentage_change)
+      .reduce((acc: number, val) => acc + (val ?? 0), 0) ?? 0;
+  }
+
   const values = {
     portfolio,
     addToPortfolio,
@@ -138,7 +152,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     proceedBuyOrder,
     proceedSellOrder,
     getAvailableCash,
-    getPortfolioTotal
+    getPortfolioTotal,
+    getTotalChangeToday,
+    getTotalChangeTodayPercent
   }
 
   return (
