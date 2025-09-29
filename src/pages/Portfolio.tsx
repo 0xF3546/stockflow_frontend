@@ -17,9 +17,8 @@ const PortfolioPage = () => {
   const totalValue = portfolio
     ? portfolio.getPortfolioTotal() + portfolio.getAvailableCash()
     : 0;
-  const totalCost = portfolio?.portfolio.reduce((sum, holding) => sum + (holding.quantity ?? 0) * (holding.avg_price ?? 0), 0) ?? 0;
-  const totalGainLoss = totalValue - totalCost;
-  const totalGainLossPercent = (totalGainLoss / totalCost) * 100;
+  const totalGainLoss = portfolio?.getTotalGainLoss() ?? 0;
+  const totalGainLossPercent = portfolio?.getTotalGainLossPercent() ?? 0;
 
   return (
     <div className="p-6 space-y-6">
@@ -63,8 +62,8 @@ const PortfolioPage = () => {
             <CardTitle className="text-sm font-medium text-muted-foreground">Day's Change</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-mono font-bold text-primary">+$1,247.32</p>
-            <p className="text-sm text-primary">+0.89%</p>
+            <p className="text-3xl font-mono font-bold text-primary">${portfolio?.getTotalChangeToday().toFixed(2) ?? 0}</p>
+            <p className="text-sm text-primary">+{portfolio?.getTotalChangeTodayPercent().toFixed(2) ?? 0}%</p>
           </CardContent>
         </Card>
         <Card>
@@ -72,7 +71,7 @@ const PortfolioPage = () => {
             <CardTitle className="text-sm font-medium text-muted-foreground">Cash Balance</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-3xl font-mono font-bold">$15,430.50</p>
+            <p className="text-3xl font-mono font-bold">${portfolio?.getAvailableCash().toFixed(2) ?? 0}</p>
           </CardContent>
         </Card>
       </div>

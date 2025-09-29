@@ -5,19 +5,6 @@ import { usePortfolio } from "../contexts/portfolioContext"
 import { useStocks } from "../contexts/stockContext"
 import { types_PortfolioItem } from "../generated/api/requests"
 
-const portfolioData = {
-  totalValue: "$127,543.89",
-  dayChange: "+$2,345.67",
-  dayChangePercent: "+1.87%",
-  totalGainLoss: "+$12,543.89",
-  totalGainLossPercent: "+10.89%",
-  positions: [
-    { symbol: "AAPL", shares: 50, value: "$8,771.50", gainLoss: "+$234.50", positive: true },
-    { symbol: "GOOGL", shares: 10, value: "$28,345.60", gainLoss: "-$124.40", positive: false },
-    { symbol: "MSFT", shares: 75, value: "$28,419.00", gainLoss: "+$567.25", positive: true },
-  ],
-}
-
 export function Portfolio() {
   const portfolio = usePortfolio();
   const stocks = useStocks();
@@ -34,14 +21,14 @@ export function Portfolio() {
           <div className="flex items-center justify-between mb-2">
             <span className="text-sm text-muted-foreground">Total Value</span>
             <Badge variant="secondary" className="bg-primary text-primary-foreground">
-              {portfolioData.dayChange} ({portfolioData.dayChangePercent})
+              {portfolio?.getTotalChangeToday() ?? 0} ({portfolio?.getTotalChangeTodayPercent().toFixed(2) ?? 0}%)
             </Badge>
           </div>
           <p className="text-2xl font-bold">{portfolio?.getPortfolioTotal().toFixed(2)}</p>
           <div className="flex items-center gap-2 mt-2">
             <TrendingUp className="h-4 w-4 text-primary" />
             <span className="text-sm text-primary font-semibold">
-              {portfolioData.totalGainLoss} ({portfolioData.totalGainLossPercent})
+              {portfolio?.getTotalGainLoss() ?? 0} ({portfolio?.getTotalGainLossPercent().toFixed(2) ?? 0}%)
             </span>
           </div>
         </div>

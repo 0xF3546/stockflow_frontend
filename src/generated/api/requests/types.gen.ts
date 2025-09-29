@@ -42,6 +42,8 @@ export type handlers_LoginResponse = {
 
 export type handlers_PortfolioResponse = {
     cash_balance?: number;
+    overall_gain_loss?: number;
+    overall_gain_loss_percentage?: number;
     portfolio?: Array<types_PortfolioItem>;
     total_value?: number;
 };

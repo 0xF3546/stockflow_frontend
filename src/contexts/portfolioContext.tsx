@@ -18,6 +18,8 @@ type PortfolioContextType = {
   proceedSellOrder: (order: { symbol: string; quantity: number; price: number; orderType: models_OrderType }) => void;
   getTotalChangeToday: () => number;
   getTotalChangeTodayPercent: () => number;
+  getTotalGainLoss: () => number;
+  getTotalGainLossPercent: () => number;
 }
 
 const PortfolioContext = createContext<PortfolioContextType | undefined>(undefined);
@@ -143,6 +145,14 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
       .reduce((acc: number, val) => acc + (val ?? 0), 0) ?? 0;
   }
 
+  const getTotalGainLoss = () => {
+    return data?.overall_gain_loss ?? 0;
+  }
+
+  const getTotalGainLossPercent = () => {
+    return data?.overall_gain_loss_percentage ?? 0;
+  }
+
   const values = {
     portfolio,
     addToPortfolio,
@@ -154,7 +164,9 @@ export const PortfolioProvider: React.FC<{ children: React.ReactNode }> = ({ chi
     getAvailableCash,
     getPortfolioTotal,
     getTotalChangeToday,
-    getTotalChangeTodayPercent
+    getTotalChangeTodayPercent,
+    getTotalGainLoss,
+    getTotalGainLossPercent
   }
 
   return (
