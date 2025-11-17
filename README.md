@@ -57,6 +57,8 @@ StockFlow is a comprehensive web application for stock trading, portfolio manage
 - **React Router** - Client-side routing
 - **Axios** - HTTP client
 
+### [Mockup](https://www.figma.com/design/BWdBts455b4FSolUBSWM5Z/Mockup-Stockflow?node-id=0-1&t=UyYFbtqEf8iGqRpI-1)
+
 ## 🚀 Getting Started
 
 ### Prerequisites
