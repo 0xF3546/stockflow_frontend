@@ -1,0 +1,226 @@
+@startuml StockFlow Data Model
+
+title StockFlow Frontend - Data Model UML Diagram
+
+' ===== Authentication Models =====
+package "Authentication" {
+  class IUser {
+    + username: string
+    + password?: string
+    + cash?: number
+  }
+
+  class IAuthRequest {
+    + user: IUser
+    + token: string
+  }
+
+  interface IAuthContext {
+    + currentUser: IUser | null
+    + setCurrentUser: React.Dispatch<React.SetStateAction<IUser | null>>
+    + login(user: IUser): Promise<void>
+    + register(user: IUser): Promise<void>
+    + logout(): void
+    + error: string | null
+    + loading: boolean
+  }
+
+  class LoginRequest {
+    + username: string
+    + password: string
+  }
+
+  class LoginResponse {
+    + token?: string
+    + username?: string
+  }
+
+  class RegisterRequest {
+    + username: string
+    + password: string
+  }
+
+  class RegisterResponse {
+    + token?: string
+    + username?: string
+    + cash_balance?: number
+  }
+}
+
+' ===== Stock Models =====
+package "Stock Management" {
+  class Stock {
+    + symbol: string
+    + name: string
+    + price: number
+    + change: number
+  }
+
+  class StockSearchResult {
+    + symbol?: string
+    + company_name?: string
+  }
+
+  interface StockContextType {
+    + stocks: Stock[]
+    + addToStocks(stock: Stock): void
+    + removeFromStocks(stock: Stock): void
+    + getStock(symbol: string): Stock | undefined
+  }
+}
+
+' ===== Portfolio Models =====
+package "Portfolio Management" {
+  class PortfolioItem {
+    + stockSymbol?: string
+    + quantity?: number
+    + avg_price?: number
+    + curr_price?: number
+    + percentage_change?: number
+  }
+
+  class PortfolioResponse {
+    + portfolio?: PortfolioItem[]
+    + cash_balance?: number
+    + total_value?: number
+    + overall_gain_loss?: number
+    + overall_gain_loss_percentage?: number
+  }
+
+  class BalanceResponse {
+    + balance?: number
+  }
+
+  interface PortfolioContextType {
+    + portfolio: PortfolioItem[]
+    + getAvailableCash(): number
+    + getPortfolioTotal(): number
+    + addToPortfolio(ticker: string, quantity: number): void
+    + removeFromPortfolio(ticker: string, quantity: number): void
+    + getStocks(ticker: string): StockWithQuantity[]
+    + getStockAmount(ticker: string): number
+    + proceedBuyOrder(order: Order): void
+    + proceedSellOrder(order: Order): void
+    + getTotalChangeToday(): number
+    + getTotalChangeTodayPercent(): number
+    + getTotalGainLoss(): number
+    + getTotalGainLossPercent(): number
+  }
+
+  class StockWithQuantity {
+    + symbol: string
+    + name: string
+    + price: number
+    + change: number
+    + quantity: number
+  }
+}
+
+' ===== Transaction Models =====
+package "Transactions" {
+  enum OrderType {
+    OrderTypeMarket = 1
+    OrderTypeLimit = 2
+    OrderTypeStop = 3
+  }
+
+  class BuyRequest {
+    + stockSymbol: string
+    + quantity: number
+    + orderType: OrderType
+    + limitPrice?: number
+    + stopPrice?: number
+  }
+
+  class SellRequest {
+    + stockSymbol: string
+    + quantity: number
+    + orderType: OrderType
+    + limitPrice?: number
+    + stopPrice?: number
+  }
+
+  class Order {
+    + symbol: string
+    + quantity: number
+    + price: number
+    + orderType: OrderType
+  }
+}
+
+' ===== API Response Models =====
+package "API Responses" {
+  class ErrorResponse {
+    + error?: string
+  }
+
+  class SuccessResponse {
+    + message?: string
+  }
+
+  class FXRateResponse {
+    + from_currency?: string
+    + to_currency?: string
+    + rate?: number
+    + daily_change?: number
+    + percent_change?: number
+  }
+}
+
+' ===== Relationships =====
+
+' Authentication relationships
+IAuthContext ..> IUser : uses
+IAuthRequest *-- IUser : contains
+LoginResponse ..> IUser : creates
+RegisterResponse ..> IUser : creates
+
+' Portfolio relationships
+PortfolioResponse *-- PortfolioItem : contains
+PortfolioContextType ..> PortfolioItem : manages
+PortfolioContextType ..> StockWithQuantity : returns
+PortfolioItem ..> Stock : references
+StockWithQuantity --|> Stock : extends
+
+' Stock relationships
+StockContextType ..> Stock : manages
+
+' Transaction relationships
+BuyRequest ..> OrderType : uses
+SellRequest ..> OrderType : uses
+Order ..> OrderType : uses
+PortfolioContextType ..> Order : processes
+PortfolioContextType ..> BuyRequest : creates
+PortfolioContextType ..> SellRequest : creates
+
+' API relationships
+BuyRequest ..> Stock : references
+SellRequest ..> Stock : references
+PortfolioItem ..> Stock : references
+
+note right of IAuthContext
+  Context for managing
+  authentication state
+  across the application
+end note
+
+note right of PortfolioContextType
+  Context for managing
+  portfolio state and
+  executing trades
+end note
+
+note right of StockContextType
+  Context for managing
+  stock data and
+  market information
+end note
+
+note bottom of OrderType
+  Enum values:
+  1 = Market Order (immediate execution)
+  2 = Limit Order (specific price)
+  3 = Stop Order (trigger price)
+end note
+
+@enduml

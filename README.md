@@ -118,9 +118,25 @@ stockflow_frontend/
 │   ├── utils/          # Utility functions
 │   ├── types/          # TypeScript types
 │   └── generated/      # Auto-generated API client
+├── docs/               # Documentation and UML diagrams
 ├── package.json
 └── vite.config.ts
 ```
+
+## 📊 Data Model
+
+For a comprehensive overview of all data structures used in the application, see the [UML Data Model Diagram](./docs/README.md).
+
+The diagram includes:
+- Authentication models (User, Auth Context)
+- Stock management entities
+- Portfolio and holdings structures
+- Transaction types (Buy/Sell/Order)
+- API response models
+
+**Quick Links:**
+- [View UML Diagram (PNG)](./docs/StockFlow%20Data%20Model.png)
+- [Data Model Documentation](./docs/README.md)
 
 ## 🎯 Available Scripts
 
@@ -240,7 +256,9 @@ For support and questions:
 
 ## 📚 Documentation
 
-For detailed documentation, see [PROJECT_PRESENTATION.md](./PROJECT_PRESENTATION.md)
+- [Project Presentation](./PROJECT_PRESENTATION.md) - Comprehensive project overview
+- [Data Model UML Diagram](./docs/README.md) - Complete data structure documentation
+- [Quick Reference Guide](./QUICK_REFERENCE.md) - Quick start and reference
 
 ---
 
